@@ -47,7 +47,7 @@ export function ArtworkModal({ artwork, onClose }: Props) {
         >
           <motion.div
             key="modal-panel"
-            className="relative my-0 w-full max-w-6xl bg-ink-800/95 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] ring-1 ring-bone-50/5 sm:my-8 sm:rounded-sm"
+            className="relative my-0 w-full max-w-6xl bg-ink-900 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)] ring-1 ring-bone-50/15 sm:my-8"
             variants={modalPanel}
             initial="hidden"
             animate="show"
@@ -173,7 +173,7 @@ function ModalBody({
         >
           <div className="eyebrow">{artwork.collection[lang]}</div>
 
-          <h2 className="mt-4 font-display text-3xl font-semibold leading-tight tracking-tight text-bone-50 sm:text-4xl">
+          <h2 className="mt-4 font-display text-4xl font-semibold uppercase leading-[0.95] tracking-tight text-bone-50 sm:text-5xl">
             {artwork.title[lang]}
           </h2>
 
@@ -194,7 +194,7 @@ function ModalBody({
             {artwork.description[lang]}
           </p>
 
-          <dl className="mt-8 grid grid-cols-2 gap-y-4 border-t border-bone-50/5 pt-6 text-sm">
+          <dl className="mt-8 grid grid-cols-3 gap-y-4 border-t border-bone-50/15 pt-6 text-sm">
             <div>
               <dt className="text-[11px] uppercase tracking-[0.22em] text-bone-50/40">
                 {t("modal.year")}
@@ -213,14 +213,6 @@ function ModalBody({
               </dt>
               <dd className="mt-1 text-bone-50/90">
                 {artwork.width} × {artwork.height} {t("common.cm")}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[11px] uppercase tracking-[0.22em] text-bone-50/40">
-                {t("modal.price")}
-              </dt>
-              <dd className="mt-1 font-display text-xl text-crimson-300">
-                {isSold ? "—" : `$${artwork.price.toLocaleString()}`}
               </dd>
             </div>
           </dl>

@@ -2,13 +2,11 @@ import type { ArtworkStatus } from "../types";
 import { useLang } from "../i18n/LangContext";
 
 export type SizeBucket = "all" | "small" | "medium" | "large";
-export type PriceBucket = "all" | "under1k" | "1k3k" | "3k6k" | "over6k";
 export type StatusFilter = "all" | ArtworkStatus;
 
 export interface FilterState {
   year: number | "all";
   size: SizeBucket;
-  price: PriceBucket;
   status: StatusFilter;
   collection: string | "all";
 }
@@ -24,9 +22,9 @@ export function Filters({ years, collections, state, onChange }: Props) {
   const { t } = useLang();
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <span className="text-[11px] uppercase tracking-[0.3em] text-bone-50/45">
-        {t("catalog.filters")}
+    <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+      <span className="text-[11px] uppercase tracking-[0.32em] text-bone-50/55">
+        {t("catalog.filters")} /
       </span>
 
       <Select
@@ -48,19 +46,6 @@ export function Filters({ years, collections, state, onChange }: Props) {
           { value: "small", label: t("catalog.size.small") },
           { value: "medium", label: t("catalog.size.medium") },
           { value: "large", label: t("catalog.size.large") },
-        ]}
-      />
-
-      <Select
-        label={t("catalog.filter.price")}
-        value={state.price}
-        onChange={(v) => onChange({ ...state, price: v as PriceBucket })}
-        options={[
-          { value: "all", label: t("catalog.filter.all") },
-          { value: "under1k", label: t("catalog.price.under1k") },
-          { value: "1k3k", label: t("catalog.price.1k3k") },
-          { value: "3k6k", label: t("catalog.price.3k6k") },
-          { value: "over6k", label: t("catalog.price.over6k") },
         ]}
       />
 
@@ -89,11 +74,11 @@ export function Filters({ years, collections, state, onChange }: Props) {
       <button
         type="button"
         onClick={() =>
-          onChange({ year: "all", size: "all", price: "all", status: "all", collection: "all" })
+          onChange({ year: "all", size: "all", status: "all", collection: "all" })
         }
-        className="ml-1 rounded-full border border-bone-50/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.22em] text-bone-50/55 transition hover:border-crimson-400/60 hover:text-bone-50"
+        className="ml-auto text-[11px] uppercase tracking-[0.28em] text-bone-50/55 hover:text-bone-50"
       >
-        Reset
+        Reset ×
       </button>
     </div>
   );
@@ -108,28 +93,30 @@ interface SelectProps {
 
 function Select({ label, value, onChange, options }: SelectProps) {
   return (
-    <label className="group relative inline-flex items-center gap-2 rounded-full border border-bone-50/10 bg-ink-800/60 px-3 py-1.5 text-xs text-bone-50/85 transition hover:border-crimson-400/40">
-      <span className="text-[10px] uppercase tracking-[0.22em] text-bone-50/45">{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-transparent pr-4 text-xs text-bone-50/90 focus:outline-none"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value} className="bg-ink-800 text-bone-50">
-            {o.label}
-          </option>
-        ))}
-      </select>
-      <svg
-        className="pointer-events-none -ml-2 text-bone-50/45 transition group-hover:text-crimson-300"
-        width="10"
-        height="10"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" />
-      </svg>
+    <label className="group flex items-baseline gap-2 text-bone-50/85">
+      <span className="text-[10px] uppercase tracking-[0.28em] text-bone-50/45">{label}</span>
+      <span className="relative inline-flex items-baseline gap-1">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="appearance-none border-0 border-b border-transparent bg-transparent pr-3 font-display text-base italic text-bone-50 transition focus:border-bone-50 focus:outline-none group-hover:border-bone-50/40"
+        >
+          {options.map((o) => (
+            <option key={o.value} value={o.value} className="bg-ink-900 font-sans not-italic text-bone-50">
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <svg
+          className="pointer-events-none -ml-2 text-bone-50/50 transition group-hover:text-bone-50"
+          width="10"
+          height="10"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" />
+        </svg>
+      </span>
     </label>
   );
 }

@@ -11,7 +11,6 @@ import { fadeUp, stagger } from "../motion";
 const INITIAL: FilterState = {
   year: "all",
   size: "all",
-  price: "all",
   status: "all",
   collection: "all",
 };
@@ -27,21 +26,6 @@ function matchesSize(a: Artwork, bucket: FilterState["size"]) {
       return max >= 50 && max <= 100;
     case "large":
       return max > 100;
-    default:
-      return true;
-  }
-}
-
-function matchesPrice(a: Artwork, bucket: FilterState["price"]) {
-  switch (bucket) {
-    case "under1k":
-      return a.price < 1000;
-    case "1k3k":
-      return a.price >= 1000 && a.price < 3000;
-    case "3k6k":
-      return a.price >= 3000 && a.price < 6000;
-    case "over6k":
-      return a.price >= 6000;
     default:
       return true;
   }
@@ -66,7 +50,6 @@ export function Catalog() {
     return artworks.filter((a) => {
       if (filters.year !== "all" && a.year !== filters.year) return false;
       if (!matchesSize(a, filters.size)) return false;
-      if (!matchesPrice(a, filters.price)) return false;
       if (filters.status !== "all" && a.status !== filters.status) return false;
       if (filters.collection !== "all" && a.collection[lang] !== filters.collection) return false;
       return true;
@@ -75,7 +58,7 @@ export function Catalog() {
 
   const shown = filtered.slice(0, visible);
   const canLoadMore = visible < filtered.length;
-  const gridKey = `${filters.year}-${filters.size}-${filters.price}-${filters.status}-${filters.collection}-${lang}`;
+  const gridKey = `${filters.year}-${filters.size}-${filters.status}-${filters.collection}-${lang}`;
 
   return (
     <>
@@ -86,20 +69,35 @@ export function Catalog() {
             initial="hidden"
             animate="show"
           >
-            <motion.div className="eyebrow" variants={fadeUp}>
-              {t("nav.catalog")}
+            <motion.div className="flex items-center justify-between" variants={fadeUp}>
+              <div className="eyebrow">{t("nav.catalog")}</div>
+              <div className="font-display text-xl italic text-bone-100/80">
+                {String(filtered.length).padStart(2, "0")}
+              </div>
             </motion.div>
+
             <motion.h1
-              className="mt-5 font-display text-5xl font-semibold tracking-tight sm:text-6xl"
+              className="mt-6 font-display text-6xl font-semibold uppercase leading-[0.9] tracking-tight sm:text-8xl"
               variants={fadeUp}
             >
-              {t("catalog.title")}
+              {lang === "ru" ? (
+                <>
+                  Каталог<br />
+                  <span className="italic text-crimson-400">работ</span>
+                </>
+              ) : (
+                <>
+                  The<br />
+                  <span className="italic text-crimson-400">Catalog</span>
+                </>
+              )}
             </motion.h1>
-            <motion.p className="mt-3 max-w-2xl text-bone-50/60" variants={fadeUp}>
+
+            <motion.p className="mt-5 max-w-2xl text-bone-50/70" variants={fadeUp}>
               {t("catalog.subtitle")}
             </motion.p>
 
-            <motion.div className="mt-10" variants={fadeUp}>
+            <motion.div className="mt-12 border-y border-bone-50/15 py-5" variants={fadeUp}>
               <Filters
                 years={years}
                 collections={collections}
@@ -114,13 +112,13 @@ export function Catalog() {
         </div>
       </section>
 
-      <section className="py-14">
+      <section className="py-20">
         <div className="container-art">
           <AnimatePresence mode="wait">
             {shown.length === 0 ? (
               <motion.div
                 key="empty"
-                className="rounded-sm border border-bone-50/5 bg-ink-800/40 p-16 text-center text-bone-50/55"
+                className="border border-bone-50/15 p-20 text-center text-bone-50/60"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -131,26 +129,33 @@ export function Catalog() {
             ) : (
               <motion.div
                 key={gridKey}
-                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                variants={stagger(0.04, 0.07)}
+                className="grid gap-x-10 gap-y-16 sm:grid-cols-2 lg:grid-cols-3"
+                variants={stagger(0.04, 0.08)}
                 initial="hidden"
                 animate="show"
                 exit={{ opacity: 0 }}
               >
                 {shown.map((a, idx) => (
-                  <ArtworkCard key={a.id} artwork={a} onOpen={setActive} priority={idx < 6} />
+                  <ArtworkCard
+                    key={a.id}
+                    artwork={a}
+                    onOpen={setActive}
+                    index={idx}
+                    priority={idx < 6}
+                    variant="tall"
+                  />
                 ))}
               </motion.div>
             )}
           </AnimatePresence>
 
           {canLoadMore && (
-            <div className="mt-14 flex justify-center">
+            <div className="mt-24 flex justify-center">
               <motion.button
                 type="button"
                 onClick={() => setVisible((v) => v + PAGE_SIZE)}
                 className="btn-ghost"
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
               >
                 {t("catalog.loadMore")}
